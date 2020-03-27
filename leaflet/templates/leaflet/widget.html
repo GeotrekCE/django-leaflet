@@ -1,18 +1,18 @@
-{% load leaflet_tags %}
-{% load static from staticfiles %}
+{% load leaflet_tags l10n %}
+{% load static %}
 
 <style type="text/css">{% block map_css %}
-    {% if map_width and map_height %}#{{ id_map }} { width: {{ map_width }}; height: {{ map_height }}; }{% endif %}
-    {% if not display_raw %}#{{ id }} { display: none; }{% endif %}
+    {% if map_width and map_height %}#{{ id_map }} { width: {{ map_width|unlocalize }}; height: {{ map_height|unlocalize }}; }{% endif %}
+    {% if not display_raw %}#{{ id_css }} { display: none; }{% endif %}
     {% endblock map_css %}
 </style>
 
 <script type="text/javascript">
     {% block vars %}var {{ module }} = {};
-    {{ module }}.fieldid = '{{ id }}';
+    {{ module }}.fieldid = '{{ id_css }}';
     {{ module }}.modifiable = {{ modifiable|yesno:"true,false" }};
     {{ module }}.geom_type = '{{ geom_type }}';
-    {{ module }}.srid = {{ map_srid }};
+    {{ module }}.srid = {{ map_srid|unlocalize }};
     {% endblock vars %}
 
     function {{ id_map_callback }}(map, options) {
@@ -41,5 +41,11 @@
 {% endblock map %}
 {% endif %}
 
-{% if display_raw %}<p> Geometry:</p>{% endif %}
-<textarea id="{{ id }}" class="required" cols="150" rows="10" name="{{ name }}">{{ serialized }}</textarea>
+{% if display_raw %}
+<p>Draw on map or paste a <a
+    href="http://geojsonlint.com/"
+    title="Validate your GeoJSON Geometry at GeoJSONLint.com in a new window"
+    target="_blank"
+    rel="nofollow">valid GeoJSON Geometry</a>:</p>
+{% endif %}
+<textarea id="{{ id_css }}" class="required django-leaflet-raw-textarea" cols="150" rows="10" name="{{ name }}">{{ serialized }}</textarea>

@@ -3,18 +3,69 @@ from __future__ import unicode_literals
 import json
 
 import django
+from django.contrib.staticfiles.storage import StaticFilesStorage, staticfiles_storage
+
+try:
+    from django.templatetags.static import static
+except ImportError:
+    from django.contrib.staticfiles.templatetags.staticfiles import static
+
 from django.test import SimpleTestCase
 from django.contrib.admin import ModelAdmin, StackedInline
 from django.contrib.admin.options import BaseModelAdmin, InlineModelAdmin
 from django.contrib.gis.db import models as gismodels
 
 from .. import PLUGINS, PLUGIN_FORMS, _normalize_plugins_config, JSONLazyTranslationEncoder
-from django.utils import six
+
+try:
+    import six
+except ImportError:
+    from django.utils import six
+
 from django.utils.translation import ugettext_lazy
 from ..templatetags import leaflet_tags
 from ..admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 from ..forms.widgets import LeafletWidget
 from ..forms import fields
+
+
+class DummyStaticFilesStorage(StaticFilesStorage):
+
+    def url(self, name):
+        raise ValueError
+
+
+class AppLoadingTest(SimpleTestCase):
+
+    def test_init_with_non_default_staticfiles_storage(self):
+        """
+        Non-default STATICFILES_STORAGE (ex. django.contrib.staticfiles.storage.ManifestStaticFilesStorage)
+        might raise ValueError when file could not be found by this storage and DEBUG is set to False.
+
+        Ensure that _normalize_plugins_config calls `static` lazily, in order to let the `collectstatic` command to run.
+
+        """
+
+        try:
+            with self.settings(STATICFILES_STORAGE='leaflet.tests.tests.DummyStaticFilesStorage',
+                               STATIC_ROOT="/", DEBUG=False):
+                staticfiles_storage._setup()  # reset already initialized (and memoized) default STATICFILES_STORAGE
+
+                with self.assertRaises(ValueError):
+                    # Ensure that our DummyStaticFilesStorage is unable to process `static` calls right now
+                    static("a")
+
+                PLUGINS.update({
+                    'a': {'css': 'a'},
+                })
+
+                PLUGINS.pop('__is_normalized__')
+                # This would raise if `static` calls are not lazy
+                _normalize_plugins_config()
+        finally:
+            # Reset the STATICFILES_STORAGE to a default one
+            staticfiles_storage._setup()
+            _normalize_plugins_config()
 
 
 class PluginListingTest(SimpleTestCase):
@@ -139,7 +190,7 @@ class BaseLeafletGeoAdminTest(object):
     def setUp(self):
         self.modeladmin = self.leafletgeoadmin_class(DummyModel, DummyAdminSite())
         self.geomfield = DummyModel._meta.get_field('geom')
-        self.formfield = self.modeladmin.formfield_for_dbfield(self.geomfield)
+        self.formfield = self.modeladmin.formfield_for_dbfield(self.geomfield, None)
 
     def test_widget_for_field(self):
         widget = self.formfield.widget
@@ -297,7 +348,7 @@ class LeafletGeoAdminMapTest(LeafletGeoAdminTest):
         widget = self.formfield.widget
         output = widget.render('geom', '', {'id': 'geom'})
         self.assertIn(".module .leaflet-draw ul", output)
-        self.assertIn('<div id="geom_div_map">', output)
+        self.assertIn('<div id="geom-div-map">', output)
 
 
 class JSONLazyTranslationEncoderTest(SimpleTestCase):

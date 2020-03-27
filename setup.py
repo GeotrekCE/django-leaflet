@@ -12,7 +12,7 @@ if sys.version_info < (2, 7):
 
 setup(
         name='django-leaflet',
-        version='0.19.0+geotrek4',
+        version='0.26.0+geotrek4',
         author='Mathieu Leplatre',
         author_email='mathieu.leplatre@makina-corpus.com',
         url='https://github.com/makinacorpus/django-leaflet',
@@ -26,6 +26,9 @@ setup(
                              'r', 'utf-8').read(),
         license='LPGL, see LICENSE file.',
         install_requires=requires,
+        extras_require={
+            'docs': ['sphinx', 'sphinx-autobuild'],
+        },
         packages=find_packages(),
         include_package_data=True,
         zip_safe=False,
