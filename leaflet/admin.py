@@ -26,7 +26,7 @@ class LeafletGeoAdminMixin(object):
     display_raw = False
     settings_overrides = {}
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
+    def formfield_for_dbfield(self, db_field, request=None, **kwargs):
         """
         Overloaded from ModelAdmin to set Leaflet widget
         in form field init params.
@@ -36,12 +36,17 @@ class LeafletGeoAdminMixin(object):
                                        self.widget.supports_3d)
 
         if is_editable:
-            kwargs.pop('request', None)  # unsupported for form field
             # Setting the widget with the newly defined widget.
-            kwargs['widget'] = self._get_map_widget(db_field)
+            widget = self.widget
+            if 'widget' in kwargs and issubclass(kwargs['widget'], LeafletWidget):
+                # If the widget is already a LeafletWidget of some kind
+                # Then use it rather than a blank one.
+                widget = kwargs['widget']
+
+            kwargs['widget'] = self._get_map_widget(db_field, widget)
             return db_field.formfield(**kwargs)
         else:
-            return super(LeafletGeoAdminMixin, self).formfield_for_dbfield(db_field, **kwargs)
+            return super(LeafletGeoAdminMixin, self).formfield_for_dbfield(db_field, request, **kwargs)
 
     def _get_map_widget(self, db_field):
         """
