@@ -82,8 +82,6 @@ L.FieldStore = L.Class.extend({
         if (/^\s*$/.test(value)) {
             return null;
         }
-        // Helps to get rid of the float value conversion error
-        this.formfield.value = JSON.stringify(JSON.parse(value));
         return L.GeoJSON.geometryToLayer(JSON.parse(value));
     },
 });
