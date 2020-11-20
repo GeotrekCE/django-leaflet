@@ -510,7 +510,7 @@ L.Draw.Polyline = L.Draw.Feature.extend({
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		touchIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-touch-icon'
 		}),
 		guidelineDistance: 20,
@@ -1872,7 +1872,7 @@ L.Edit.PolyVerticesEdit = L.Handler.extend({
 			className: 'leaflet-div-icon leaflet-editing-icon'
 		}),
 		touchIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-touch-icon'
 		}),
 		drawError: {
@@ -2323,11 +2323,11 @@ L.Edit.SimpleShape = L.Handler.extend({
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize'
 		}),
 		touchMoveIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-move leaflet-touch-icon'
 		}),
 		touchResizeIcon: new L.DivIcon({
-			iconSize: new L.Point(20, 20),
+			iconSize: new L.Point(8, 8),
 			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize leaflet-touch-icon'
 		}),
 	},
