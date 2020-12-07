@@ -12,7 +12,7 @@ if sys.version_info < (2, 7):
 
 setup(
         name='django-leaflet',
-        version='0.19.0+geotrek4',
+        version='0.19.0+geotrek9',
         author='Mathieu Leplatre',
         author_email='mathieu.leplatre@makina-corpus.com',
         url='https://github.com/makinacorpus/django-leaflet',
