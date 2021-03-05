@@ -318,3 +318,10 @@ To include all plugins configured in ``LEAFLET_CONFIG['PLUGINS']``, use::
 
     {% leaflet_js plugins="ALL" %}
     {% leaflet_css plugins="ALL" %}
+
+Animations
+~~~~~~~~~~
+
+To disable animations:
+
+    'ANIMATE': False,

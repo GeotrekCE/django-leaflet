@@ -55,6 +55,13 @@ L.Map.DjangoMap = L.Map.extend({
         if (!isNaN(parseInt(djoptions.maxzoom, 10)))
             options.maxZoom = djoptions.maxzoom;
 
+        // Disable animations
+        if (!djoptions.animate) {
+            options.zoomAnimation = false;
+            options.fadeAnmation = false;
+            options.markerZoomAnimation = false;
+        }
+
         // Translate to native options
         options = L.Util.extend(options,
             this._projectionOptions(djoptions));

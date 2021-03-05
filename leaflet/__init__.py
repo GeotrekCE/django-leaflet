@@ -33,6 +33,7 @@ app_settings = dict({
     'NO_GLOBALS': True,
     'PLUGINS': OrderedDict(),
     'SPATIAL_EXTENT': (-180, -90, 180, 90),
+    'ANIMATE': True,
 }, **LEAFLET_CONFIG)
 
 
