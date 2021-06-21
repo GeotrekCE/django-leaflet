@@ -78,8 +78,8 @@ AUTHORS
 
 |makinacom|_
 
-.. |makinacom| image:: http://depot.makina-corpus.org/public/logo.gif
-.. _makinacom:  http://www.makina-corpus.com
+.. |makinacom| image:: https://geotrek.fr/assets/img/logo_makina.svg
+.. _makinacom:  https://makina-corpus.com
 
 =======
 LICENSE
