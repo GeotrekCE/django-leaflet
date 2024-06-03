@@ -1,17 +1,14 @@
 {% load i18n %}
 {% load static %}
 {% if creatediv %}<div id="{{ name }}" class="leaflet-container-default"></div>{% endif %}
-<script>
+<script type="text/javascript">
 (function () {
 
     function loadmap() {
         var djoptions = {% autoescape off %}{{ djoptions }}{% endautoescape %},
             options = {djoptions: djoptions, initfunc: loadmap,
-                       globals: {{ NO_GLOBALS|yesno:"false,true"}}, callback: {{ callback|default:"null" }}},
-            map = L.Map.djangoMap('{{ name }}', options);
-        {% if not NO_GLOBALS %}
-        window['leafletmap' + '{{ name }}'] = map;
-        {% endif %}
+                       globals: {{ NO_GLOBALS|yesno:"false,true"}}, callback: {{ callback|default:"null" }}};
+        L.Map.djangoMap('{{ name }}', options);
     }
     var loadevents = {% autoescape off %}{{ loadevents }}{% endautoescape %};
     if (loadevents.length === 0) loadmap();

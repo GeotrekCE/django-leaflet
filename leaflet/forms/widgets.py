@@ -1,7 +1,10 @@
+from django import get_version
 from django import forms
-from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
+from django.core.exceptions import ImproperlyConfigured
 from django.template.defaultfilters import slugify
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
+
 
 from leaflet import app_settings, PLUGINS, PLUGIN_FORMS
 

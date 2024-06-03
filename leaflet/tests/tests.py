@@ -1,56 +1,16 @@
 import django
+from django.test import SimpleTestCase
 from django.contrib.admin import ModelAdmin, StackedInline
 from django.contrib.admin.options import BaseModelAdmin, InlineModelAdmin
 from django.contrib.gis.db import models as gismodels
-from django.contrib.staticfiles.storage import StaticFilesStorage, staticfiles_storage
-from django.templatetags.static import static
-from django.test import SimpleTestCase
 
-from .. import PLUGINS, PLUGIN_FORMS, _normalize_plugins_config
-
+from .. import PLUGINS, PLUGIN_FORMS, _normalize_plugins_config, JSONLazyTranslationEncoder
+from django.utils import six
+from django.utils.translation import ugettext_lazy
 from ..templatetags import leaflet_tags
 from ..admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 from ..forms.widgets import LeafletWidget
 from ..forms import fields
-
-
-class DummyStaticFilesStorage(StaticFilesStorage):
-
-    def url(self, name):
-        raise ValueError
-
-
-class AppLoadingTest(SimpleTestCase):
-
-    def test_init_with_non_default_staticfiles_storage(self):
-        """
-        Non-default STATICFILES_STORAGE (ex. django.contrib.staticfiles.storage.ManifestStaticFilesStorage)
-        might raise ValueError when file could not be found by this storage and DEBUG is set to False.
-
-        Ensure that _normalize_plugins_config calls `static` lazily, in order to let the `collectstatic` command to run.
-
-        """
-
-        try:
-            with self.settings(STATICFILES_STORAGE='leaflet.tests.tests.DummyStaticFilesStorage',
-                               STATIC_ROOT="/", DEBUG=False):
-                staticfiles_storage._setup()  # reset already initialized (and memoized) default STATICFILES_STORAGE
-
-                with self.assertRaises(ValueError):
-                    # Ensure that our DummyStaticFilesStorage is unable to process `static` calls right now
-                    static("a")
-
-                PLUGINS.update({
-                    'a': {'css': 'a'},
-                })
-
-                PLUGINS.pop('__is_normalized__')
-                # This would raise if `static` calls are not lazy
-                _normalize_plugins_config()
-        finally:
-            # Reset the STATICFILES_STORAGE to a default one
-            staticfiles_storage._setup()
-            _normalize_plugins_config()
 
 
 class PluginListingTest(SimpleTestCase):
@@ -66,7 +26,7 @@ class PluginListingTest(SimpleTestCase):
 
         names = leaflet_tags._get_plugin_names(None)
         resources = leaflet_tags._get_all_resources_for_plugins(names, 'css')
-        self.assertEqual(['/static/b'], resources)
+        self.assertEquals(['/static/b'], resources)
 
     def test_all_resources(self):
         PLUGINS.update({
@@ -81,8 +41,8 @@ class PluginListingTest(SimpleTestCase):
 
         names = leaflet_tags._get_plugin_names('ALL')
         resources = leaflet_tags._get_all_resources_for_plugins(names, 'css')
-        self.assertEqual(['/static/a', '/static/b', '/static/c'],
-                         sorted(resources))
+        self.assertEquals(['/static/a', '/static/b', '/static/c'],
+                          sorted(resources))
 
     def test_explicit_resources(self):
         PLUGINS.update({
@@ -95,14 +55,14 @@ class PluginListingTest(SimpleTestCase):
 
         names = leaflet_tags._get_plugin_names('a,c')
         resources = leaflet_tags._get_all_resources_for_plugins(names, 'css')
-        self.assertEqual(['/static/a', '/static/c'], sorted(resources))
+        self.assertEquals(['/static/a', '/static/c'], sorted(resources))
 
 
 class TemplateTagTest(SimpleTestCase):
 
     def test_default_layer_in_leaflet_map(self):
         context = leaflet_tags.leaflet_map('map')
-        self.assertEqual('map', context['name'])
+        self.assertEquals('map', context['name'])
         self.assertTrue('"OSM", "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"' in
                         context['djoptions'])
 
@@ -111,8 +71,8 @@ class LeafletWidgetRenderingTest(SimpleTestCase):
     def test_default_media(self):
         widget = LeafletWidget()
         media = widget.media
-        self.assertEqual([], media.render_js())
-        self.assertEqual([], list(media.render_css()))
+        self.assertEquals([], media.render_js())
+        self.assertEquals([], list(media.render_css()))
 
     def test_included_media(self):
         class LeafletWidgetMedia(LeafletWidget):
@@ -142,10 +102,10 @@ class LeafletFieldsWidgetsTest(SimpleTestCase):
                     'MultiLineString', 'MultiPolygon', 'GeometryCollection']:
             f = getattr(fields, typ + 'Field')()
             self.assertTrue(isinstance(f.widget, LeafletWidget))
-            self.assertEqual(f.widget.geom_type, typ.upper())
+            self.assertEquals(f.widget.geom_type, typ.upper())
 
 
-class DummyAdminSite:
+class DummyAdminSite(object):
     """
     Mock adminsite, which is required by InlineModelAdmin.__init__
     """
@@ -168,14 +128,14 @@ class DummyInlineModel(gismodels.Model):
         app_label = "leaflet"
 
 
-class BaseLeafletGeoAdminTest:
+class BaseLeafletGeoAdminTest(object):
     modeladmin_class = None  # type: BaseModelAdmin
     leafletgeoadmin_class = None  # type: LeafletGeoAdmin
 
     def setUp(self):
         self.modeladmin = self.leafletgeoadmin_class(DummyModel, DummyAdminSite())
         self.geomfield = DummyModel._meta.get_field('geom')
-        self.formfield = self.modeladmin.formfield_for_dbfield(self.geomfield, None)
+        self.formfield = self.modeladmin.formfield_for_dbfield(self.geomfield)
 
     def test_widget_for_field(self):
         widget = self.formfield.widget
@@ -183,8 +143,8 @@ class BaseLeafletGeoAdminTest:
 
     def test_widget_parameters(self):
         widget = self.formfield.widget
-        self.assertEqual(widget.geom_type, 'POINT')
-        self.assertEqual(widget.settings_overrides, {'DEFAULT_CENTER': (8.0, 3.15), })
+        self.assertEquals(widget.geom_type, 'POINT')
+        self.assertEquals(widget.settings_overrides, {'DEFAULT_CENTER': (8.0, 3.15), })
         self.assertFalse(widget.map_height is None)
         self.assertFalse(widget.map_width is None)
         self.assertTrue(widget.modifiable)
@@ -206,7 +166,7 @@ class BaseLeafletGeoAdminTest:
         self.assertTrue(issubclass(self.leafletgeoadmin_class, self.modeladmin_class))
 
 
-class DummyAdminSettingsOverridesMixin:
+class DummyAdminSettingsOverridesMixin(object):
     settings_overrides = {
         'DEFAULT_CENTER': (8.0, 3.15),
     }
@@ -315,15 +275,16 @@ class LeafletModelFormTest(SimpleTestCase):
         output = form.as_p()
         self.assertIn(".geom_type = 'Point'", output)
 
-    def test_modelform_widget_conformity(self):
-        class DummyForm(django.forms.ModelForm):
-            class Meta:
-                model = DummyModel
-                fields = ['geom']
-                widgets = {'geom': LeafletWidget()}
-        form = DummyForm()
-        output = form.as_p()
-        self.assertIn(".geom_type = 'Point'", output)
+    if django.VERSION >= (1, 6, 0):
+        def test_modelform_widget_conformity(self):
+            class DummyForm(django.forms.ModelForm):
+                class Meta:
+                    model = DummyModel
+                    fields = ['geom']
+                    widgets = {'geom': LeafletWidget()}
+            form = DummyForm()
+            output = form.as_p()
+            self.assertIn(".geom_type = 'Point'", output)
 
 
 class LeafletGeoAdminMapTest(LeafletGeoAdminTest):
@@ -332,4 +293,13 @@ class LeafletGeoAdminMapTest(LeafletGeoAdminTest):
         widget = self.formfield.widget
         output = widget.render('geom', '', {'id': 'geom'})
         self.assertIn(".module .leaflet-draw ul", output)
-        self.assertIn('<div id="geom-div-map">', output)
+        self.assertIn('<div id="geom_div_map">', output)
+
+
+class JSONLazyTranslationEncoderTest(SimpleTestCase):
+
+    def test_lazy_translation_encoding(self):
+        text = ugettext_lazy('text')
+        ret = json.dumps(text, cls=JSONLazyTranslationEncoder)
+        self.assertIsInstance(ret, six.string_types)
+        self.assertEqual(ret, '"text"')

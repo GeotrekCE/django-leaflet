@@ -15,7 +15,7 @@ with open(os.path.join(here, 'CHANGES')) as f:
 
 setup(
     name='django-leaflet',
-    version='0.27.0.dev+geotrek1',
+    version='0.19.post9',
     author='Mathieu Leplatre',
     author_email='mathieu.leplatre@makina-corpus.com',
     url='https://github.com/makinacorpus/django-leaflet',
@@ -39,10 +39,5 @@ setup(
         'Framework :: Django',
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
     ],
 )
