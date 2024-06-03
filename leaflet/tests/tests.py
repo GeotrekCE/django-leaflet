@@ -145,8 +145,6 @@ class BaseLeafletGeoAdminTest(object):
         widget = self.formfield.widget
         self.assertEquals(widget.geom_type, 'POINT')
         self.assertEquals(widget.settings_overrides, {'DEFAULT_CENTER': (8.0, 3.15), })
-        self.assertFalse(widget.map_height is None)
-        self.assertFalse(widget.map_width is None)
         self.assertTrue(widget.modifiable)
 
     def test_widget_media(self):
@@ -292,9 +290,16 @@ class LeafletGeoAdminMapTest(LeafletGeoAdminTest):
     def test_widget_template_overriden(self):
         widget = self.formfield.widget
         output = widget.render('geom', '', {'id': 'geom'})
-        self.assertIn(".module .leaflet-draw ul", output)
         self.assertIn('<div id="geom_div_map">', output)
-
+        link_type = 'type="text/css" ' if django.get_version() < '4.1' else ''
+        self.assertEqual(
+            list(widget.media.render_css()),
+            [
+                f'<link href="/static/leaflet/leaflet.css" {link_type}media="screen" rel="stylesheet">',
+                f'<link href="/static/leaflet/leaflet_django.css" {link_type}media="screen" rel="stylesheet">',
+                f'<link href="/static/leaflet/draw/leaflet.draw.css" {link_type}media="screen" rel="stylesheet">',
+            ]
+        )
 
 class JSONLazyTranslationEncoderTest(SimpleTestCase):
 
