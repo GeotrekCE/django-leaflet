@@ -301,8 +301,8 @@ class LeafletGeoAdminMapTest(LeafletGeoAdminTest):
             ]
         )
 
-class JSONLazyTranslationEncoderTest(SimpleTestCase):
 
+class JSONLazyTranslationEncoderTest(SimpleTestCase):
     def test_lazy_translation_encoding(self):
         text = ugettext_lazy('text')
         ret = json.dumps(text, cls=JSONLazyTranslationEncoder)
