@@ -2,6 +2,78 @@
 CHANGELOG
 =========
 
+0.27.0 (unreleased)
+-------------------
+
+- Drop support for Django < 1.11 and Python 2
+- Upgrade proj4js to 2.6.1 and Proj4Leaflet to 1.0.2 (#287)
+- Update Czech translations, add Slovak translations #269
+- Add Arabic translation #274
+- Precision fixes #280 #291
+- Display the map on mobile (Fixes #241) #292
+
+0.26.0 (2019-12-06)
+-------------------
+
+- Django 3.0 compatibility
+
+0.25.0 (2019-10-18)
+-------------------
+
+- #225 changes in staticfiles for django 1.11.14
+- #247 Allow resizing of raw Geometry textbox input via CSS, improve label, add docs
+- #108 Add examples to docs on adding overlays, customising maps in templates, admin and forms
+- #248 Allow use of a custom widget in the Admin. (fixes #151)
+- #261 Add request to formfield_for_dbfield signature; fix #260
+- #262 Fix Missing staticfiles manifest entry for 'leaflet/images'
+
+0.24.0 (2018-06-07)
+-------------------
+
+- Updated Leaflet to 1.3.1
+
+0.23.0 (2017-11-28)
+-------------------
+
+- Fix fatal bug with Django => 1.11.2 for non-GIS databases
+- fixes #188 Better replace for icon image
+- Add Russian translation
+- Add Hungarian translation
+- Allow storing global leaflet map instances
+
+0.22.0 (2017-04-06)
+-------------------
+
+- Set a default max zoom in leaflet.forms _setView to avoid an error.
+- Fix the div ids to work with admin inlines.
+- Django 1.11 compatibility
+- Fix multipolyline/multipolygon and polyline/polygon not working
+
+0.21.0 (2017-02-28)
+-------------------
+
+- Update leaflet.draw and fix a packaging and a javascript bug
+
+
+0.20.0 (2017-01-27)
+-------------------
+
+**New features**
+
+- Update Leaflet to 1.0.3 (#169)
+- Update Leaflet-draw to 0.4.0 (#169)
+- Update Proj4Leaflet to 1.0.0 (#169)
+- Made `static` calls lazy, to fix issues with non-default STATICFILES_STORAGE (#149)
+- Add example application (#168)
+
+**Bug fixes**
+
+- Use SpatiaLite library path from environment variable for running test (#173)
+- Fix max zoom level (#165)
+- Add SPATIAL_EXTENT default value to the default settings (#167)
+
+Many thanks to @KostyaEsmukov, @cleder, @sikmir and @seav for their contributions!
+
 
 0.19.0 (2016-08-22)
 -------------------
@@ -174,7 +246,7 @@ CHANGELOG
 0.13.0 (2014-03-26)
 -------------------
 
-* Add support of Leaflet form fields on Django >= 1.4.2 (thanks Gaël Utard)
+* Add support of Leaflet form fields on Django >= 1.4.2 (thanks GaÄĹ¤l Utard)
 
 
 0.12 (2014-03-22)

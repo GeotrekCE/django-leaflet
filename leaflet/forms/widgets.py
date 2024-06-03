@@ -1,16 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from distutils.version import LooseVersion
-
-from django import get_version
 from django import forms
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
-from django.core.exceptions import ImproperlyConfigured
 from django.template.defaultfilters import slugify
-try:
-    from django.contrib.gis.forms.widgets import BaseGeometryWidget
-except (ImportError, ImproperlyConfigured):
-    from .backport import BaseGeometryWidget
 
 from leaflet import app_settings, PLUGINS, PLUGIN_FORMS
 
@@ -73,6 +64,6 @@ class LeafletWidget(BaseGeometryWidget):
 
     def get_context(self, name, value, attrs):
         value = None if value in validators.EMPTY_VALUES else value
-        context = super(LeafletWidget, self).get_context(name, value, attrs)
+        context = super().get_context(name, value, attrs)
         context.update(self._get_attrs(name, attrs))
         return context

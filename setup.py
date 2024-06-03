@@ -1,14 +1,12 @@
-
 import os
 from setuptools import setup, find_packages
-import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
-import codecs
 
-requires = ['Django']
-if sys.version_info < (2, 7):
-    requires += ['ordereddict']
+requires = [
+    'Django',
+]
+
 
 setup(
         name='django-leaflet',
@@ -29,15 +27,14 @@ setup(
         packages=find_packages(),
         include_package_data=True,
         zip_safe=False,
-        classifiers=['Topic :: Utilities',
-                     'Natural Language :: English',
-                     'Operating System :: OS Independent',
-                     'Intended Audience :: Developers',
-                     'Environment :: Web Environment',
-                     'Framework :: Django',
-                     'Development Status :: 5 - Production/Stable',
-                     'Programming Language :: Python :: 2.7',
-                     'Programming Language :: Python :: 3.3',
-                     'Programming Language :: Python :: 3.4',
-                     'Programming Language :: Python :: 3.5'],
+        classifiers=[
+          'Topic :: Utilities',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Intended Audience :: Developers',
+          'Environment :: Web Environment',
+          'Framework :: Django',
+          'Development Status :: 5 - Production/Stable',
+          'Programming Language :: Python :: 3.8'
+       ],
 )
